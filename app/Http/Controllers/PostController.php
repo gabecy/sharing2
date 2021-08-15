@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\PostUpdateRequest;
+// use App\Http\Requests\PostUpdateRequest;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\User;
@@ -11,19 +11,22 @@ use Illuminate\Support\Facades\Mail;
 
 class PostController extends Controller
 {
-    public function update(Post $post,PostUpdateRequest $request)
+    public function update($post_id,Request $request)
     {
+        $post = Post::find($post_id);
+        if(!$post){
+            abort(404);
+        }
 
+        $validator = Validator::make($request->all(),[
+            'post_text' => 'required',
+        ]);
 
-        // $validator = Validator::make($request->all(),[
-        //     'post_text' => 'required',
-        // ]);
-
-        // if($validator->fails()){
-        //     return back()
-        //         ->withInput()
-        //         ->withErrors($validator);
-        // }
+        if($validator->fails()){
+            return back()
+                ->withInput()
+                ->withErrors($validator);
+        }
 
         $post->update($request->all());
 
